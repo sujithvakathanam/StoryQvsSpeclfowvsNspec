@@ -1,0 +1,14 @@
+C:\Automation projects\implementing-restful-aspdotnet-web-api\3-restful-aspdotnet-m2-exercise-files\after\CountingKs\CountingKs.Data\bin\Release\CountingKs.Data.dll.config
+C:\Automation projects\implementing-restful-aspdotnet-web-api\3-restful-aspdotnet-m2-exercise-files\after\CountingKs\CountingKs.Data\bin\Release\CountingKs.Data.dll
+C:\Automation projects\implementing-restful-aspdotnet-web-api\3-restful-aspdotnet-m2-exercise-files\after\CountingKs\CountingKs.Data\bin\Release\CountingKs.Data.pdb
+C:\Automation projects\implementing-restful-aspdotnet-web-api\3-restful-aspdotnet-m2-exercise-files\after\CountingKs\CountingKs.Data\bin\Release\EntityFramework.dll
+C:\Automation projects\implementing-restful-aspdotnet-web-api\3-restful-aspdotnet-m2-exercise-files\after\CountingKs\CountingKs.Data\bin\Release\EntityFramework.xml
+C:\Automation projects\implementing-restful-aspdotnet-web-api\3-restful-aspdotnet-m2-exercise-files\after\CountingKs\CountingKs.Data\obj\Release\CountingKs.Data.dll
+C:\Automation projects\implementing-restful-aspdotnet-web-api\3-restful-aspdotnet-m2-exercise-files\after\CountingKs\CountingKs.Data\obj\Release\CountingKs.Data.pdb
+C:\Automation projects\WebAPI\POC for Selenium\latest\CountingKs\CountingKs.Data\bin\Release\CountingKs.Data.dll.config
+C:\Automation projects\WebAPI\POC for Selenium\latest\CountingKs\CountingKs.Data\bin\Release\CountingKs.Data.dll
+C:\Automation projects\WebAPI\POC for Selenium\latest\CountingKs\CountingKs.Data\bin\Release\CountingKs.Data.pdb
+C:\Automation projects\WebAPI\POC for Selenium\latest\CountingKs\CountingKs.Data\bin\Release\EntityFramework.dll
+C:\Automation projects\WebAPI\POC for Selenium\latest\CountingKs\CountingKs.Data\bin\Release\EntityFramework.xml
+C:\Automation projects\WebAPI\POC for Selenium\latest\CountingKs\CountingKs.Data\obj\Release\CountingKs.Data.dll
+C:\Automation projects\WebAPI\POC for Selenium\latest\CountingKs\CountingKs.Data\obj\Release\CountingKs.Data.pdb

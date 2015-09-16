@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LightBDD.NUnit</name>
+    </assembly>
+    <members>
+        <member name="T:LightBDD.BDDRunner">
+            <summary>
+            Allows to execute behavior test scenarios written with NUnit Framework.
+            </summary>
+        </member>
+        <member name="M:LightBDD.BDDRunner.#ctor(System.Type)">
+            <summary>
+            Initializes runner for given test class type with ConsoleProgressNotifier.
+            Given testClass type Name is used as feature name.
+            If test class is annotated with [FeatureDescription] or [Description] attribute, it's content is used as feature description.
+            </summary>
+            <param name="featureTestClass">Test class type.</param>
+        </member>
+        <member name="M:LightBDD.BDDRunner.#ctor(System.Type,LightBDD.Notification.IProgressNotifier)">
+            <summary>
+            Initializes runner for given test class type with given progress notifier.
+            Given testClass type Name is used as feature name.
+            If test class is annotated with [FeatureDescription] or [Description] attribute, it's content is used as feature description.
+            </summary>
+            <param name="featureTestClass">Test class type.</param>
+            <param name="progressNotifier">Progress notifier.</param>
+        </member>
+        <member name="M:LightBDD.BDDRunner.MapExceptionToStatus(System.Type)">
+            <summary>
+            Maps implementation specific exception to ResultStatus.
+            </summary>
+        </member>
+        <member name="T:LightBDD.FeatureFixture">
+            <summary>
+            Base class for feature tests.
+            It creates new BDDRunner instance on FixtureSetUp() and collects runner results and passes them to FeatureCoordinator on FixtureTearDown().
+            </summary>
+        </member>
+        <member name="M:LightBDD.FeatureFixture.FixtureSetUp">
+            <summary>
+            Creates new BDDRunner instance.
+            </summary>
+        </member>
+        <member name="M:LightBDD.FeatureFixture.FixtureTearDown">
+            <summary>
+            Collects runner results and passes them to FeatureCoordinator.
+            </summary>
+        </member>
+        <member name="M:LightBDD.FeatureFixture.CreateProgressNotifier">
+            <summary>
+            Creates progress notifier used later by BDDRunner.
+            Default implementation returns ConsoleProgressNotifier.
+            </summary>
+            <returns>progress notifier.</returns>
+        </member>
+        <member name="P:LightBDD.FeatureFixture.Runner">
+            <summary>
+            BDD Runner that should be used to run feature tests.
+            </summary>
+        </member>
+        <member name="M:LightBDD.NUnitTestMetadataProvider.GetImplementationSpecificFeatureDescription(System.Type)">
+            <summary>
+            Returns implementation specific feature description or null if such is not provided.
+            If test class is annotated with [Description] attribute, it's content is used as feature description.
+            </summary>
+            <param name="testClass">Class to analyze.</param>
+            <returns>Feature description or null.</returns>
+        </member>
+        <member name="M:LightBDD.NUnitTestMetadataProvider.GetImplementationSpecificScenarioCategories(System.Reflection.MemberInfo)">
+            <summary>
+            Returns implementation specific scenario categories or empty collection if no categories are provided.
+            If test class is annotated with [Category] attribute, it's content is used as scenario category.
+            </summary>
+            <param name="member">Scenario method or feature test class to analyze.</param>
+            <returns>Scenario categories or empty collection.</returns>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,1611 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LightBDD</name>
+    </assembly>
+    <members>
+        <member name="T:LightBDD.AbstractBDDRunner">
+            <summary>
+            Abstract class for executing behavior test scenarios.
+            </summary>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.#ctor(System.Type,LightBDD.TestMetadataProvider)">
+            <summary>
+            Initializes runner for given feature test class type with ConsoleProgressNotifier.
+            Given featureTestClass type Name is used as feature name.
+            If test class is annotated with [FeatureDescription] attribute or implementation specific description attribute, it's content is used as feature description.
+            </summary>
+            <param name="featureTestClass">Test class type.</param>
+            <param name="metadataProvider">Test metadata provider.</param>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.#ctor(System.Type,LightBDD.TestMetadataProvider,LightBDD.Notification.IProgressNotifier)">
+            <summary>
+            Initializes runner for given feature test class type with given progress notifier.
+            Given featureTestClass type Name is used as feature name.
+            If test class is annotated with [FeatureDescription] attribute or implementation specific description attribute, it's content is used as feature description.
+            </summary>
+            <param name="featureTestClass">Test class type.</param>
+            <param name="progressNotifier">Progress notifier.</param>
+            <param name="metadataProvider">Test metadata provider.</param>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.RunScenario``1(System.Action{``0}[])">
+             <summary>
+             Runs test scenario by executing given steps in specified order, where all steps share context of <c>TContext</c> type instantiated with default constructor.<br/>
+             If given step throws, other are not executed.<br/>
+             Scenario name is determined on the method name in which <c>RunScenario()</c> method was called.<br/>
+             Scenario label is determined on <c>[Label]</c> attribute applied on method in which <c>RunScenario()</c> method was called.<br/>
+             Please note that test project has to be compiled in DEBUG mode (assembly has <c>[assembly:Debuggable(true, true)]</c> attribute), or calling method has to have <c>[MethodImpl(MethodImplOptions.NoInlining)]</c> attribute in order to properly determine scenario name.<br/>
+             Step name is determined on corresponding action name.<br/>
+            
+             Example usage:
+             <code>
+             [Test]
+             [Label("Ticket-1")]
+             public void Successful_login()
+             {
+                 Runner.RunScenario&lt;LoginContext&gt;(
+                     Given_user_is_about_to_login,
+                     Given_user_entered_valid_login,
+                     Given_user_entered_valid_password,
+                     When_user_clicked_login_button,
+                     Then_login_is_successful,
+                     Then_welcome_message_is_returned_containing_user_name);
+             }
+             </code>
+             Expected step signature:
+             <code>
+             void Given_user_is_about_to_login(LoginContext context) { /* ... */ }
+             </code>
+             </summary>
+             <typeparam name="TContext">Type of context that would be shared between all steps.</typeparam>
+             <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.RunScenario``1(System.String,System.Action{``0}[])">
+            <summary>
+            Runs test scenario by executing given steps in specified order, where all steps share context of <c>TContext</c> type instantiated with default constructor.<br/>
+            If given step throws, other are not executed.<br/>
+            Scenario name is specified in parameter list.<br/>
+            Step name is determined on corresponding action name.<br/>
+            
+            Example usage:
+            <code>
+            [Test]
+            public void Successful_login()
+            {
+                Runner.RunScenario&lt;LoginContext&gt;("My successful login",
+                    Given_user_is_about_to_login,
+                    Given_user_entered_valid_login,
+                    Given_user_entered_valid_password,
+                    When_user_clicked_login_button,
+                    Then_login_is_successful,
+                    Then_welcome_message_is_returned_containing_user_name);
+            }
+            </code>
+            Expected step signature:
+            <code>
+            void Given_user_is_about_to_login(LoginContext context) { /* ... */ }
+            </code>
+            </summary>
+            <typeparam name="TContext">Type of context that would be shared between all steps.</typeparam>
+            <param name="scenarioName">Scenario name.</param>
+            <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.RunScenario``1(System.String,System.String,System.Action{``0}[])">
+            <summary>
+            Runs test scenario by executing given steps in specified order, where all steps share context of <c>TContext</c> type instantiated with default constructor.<br/>
+            If given step throws, other are not executed.<br/>
+            Scenario name and label are specified in parameter list.<br/>
+            Step name is determined on corresponding action name.<br/>
+            Example usage:
+            <code>
+            [Test]
+            public void Successful_login()
+            {
+                Runner.RunScenario&lt;LoginContext&gt;("My successful login", "Ticket-1",
+                    Given_user_is_about_to_login,
+                    Given_user_entered_valid_login,
+                    Given_user_entered_valid_password,
+                    When_user_clicked_login_button,
+                    Then_login_is_successful,
+                    Then_welcome_message_is_returned_containing_user_name);
+            }
+            </code>
+            Expected step signature:
+            <code>
+            void Given_user_is_about_to_login(LoginContext context) { /* ... */ }
+            </code>
+            </summary>
+            <typeparam name="TContext">Type of context that would be shared between all steps.</typeparam>
+            <param name="scenarioName">Scenario name.</param>
+            <param name="label">Label associated with this scenario.</param>
+            <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.RunScenario``1(``0,System.Action{``0}[])">
+            <summary>
+            Runs test scenario by executing given steps in specified order, where all steps share given <c>context</c> instance of <c>TContext</c> type.
+            If given step throws, other are not executed.<br/>
+            Scenario name is determined on the method name in which <c>RunScenario()</c> method was called.<br/>
+            Scenario label is determined on <c>[Label]</c> attribute applied on method in which <c>RunScenario()</c> method was called.<br/>
+            Please note that test project has to be compiled in DEBUG mode (assembly has <c>[assembly:Debuggable(true, true)]</c> attribute), or calling method has to have <c>[MethodImpl(MethodImplOptions.NoInlining)]</c> attribute in order to properly determine scenario name.<br/>
+            Step name is determined on corresponding action name.<br/>
+            Example usage:
+            <code>
+            [Test]
+            [Label("Ticket-1")]
+            public void Successful_login()
+            {
+                Runner.RunScenario(new LoginContext(),
+                    Given_user_is_about_to_login,
+                    Given_user_entered_valid_login,
+                    Given_user_entered_valid_password,
+                    When_user_clicked_login_button,
+                    Then_login_is_successful,
+                    Then_welcome_message_is_returned_containing_user_name);
+            }
+            </code>
+            Expected step signature:
+            <code>
+            void Given_user_is_about_to_login(LoginContext context) { /* ... */ }
+            </code>
+            </summary>
+            <typeparam name="TContext">Type of context that would be shared between all steps.</typeparam>
+            <param name="context">Context instance that would be shared between all steps.</param>
+            <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.RunScenario``1(``0,System.String,System.Action{``0}[])">
+            <summary>
+            Runs test scenario by executing given steps in specified order, where all steps share given <c>context</c> instance of <c>TContext</c> type.<br/>
+            If given step throws, other are not executed.<br/>
+            Scenario name is specified in parameter list.<br/>
+            Step name is determined on corresponding action name.<br/>
+            Example usage:
+            <code>
+            [Test]
+            public void Successful_login()
+            {
+                Runner.RunScenario(new LoginContext(), "My successful login",
+                    Given_user_is_about_to_login,
+                    Given_user_entered_valid_login,
+                    Given_user_entered_valid_password,
+                    When_user_clicked_login_button,
+                    Then_login_is_successful,
+                    Then_welcome_message_is_returned_containing_user_name);
+            }
+            </code>
+            Expected step signature:
+            <code>
+            void Given_user_is_about_to_login(LoginContext context) { /* ... */ }
+            </code>
+            </summary>
+            <typeparam name="TContext">Type of context that would be shared between all steps.</typeparam>
+            <param name="context">Context instance that would be shared between all steps.</param>
+            <param name="scenarioName">Scenario name.</param>
+            <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.RunScenario``1(``0,System.String,System.String,System.Action{``0}[])">
+            <summary>
+            Runs test scenario by executing given steps in specified order, where all steps share given <c>context</c> instance of <c>TContext</c> type.<br/>
+            If given step throws, other are not executed.<br/>
+            Scenario name and label are specified in parameter list.<br/>
+            Step name is determined on corresponding action name.<br/>
+            Example usage:
+            <code>
+            [Test]
+            public void Successful_login()
+            {
+                Runner.RunScenario(new LoginContext(), "My successful login", "Ticket-1",
+                    Given_user_is_about_to_login,
+                    Given_user_entered_valid_login,
+                    Given_user_entered_valid_password,
+                    When_user_clicked_login_button,
+                    Then_login_is_successful,
+                    Then_welcome_message_is_returned_containing_user_name);
+            }
+            </code>
+            Expected step signature:
+            <code>
+            void Given_user_is_about_to_login(LoginContext context) { /* ... */ }
+            </code>
+            </summary>
+            <typeparam name="TContext">Type of context that would be shared between all steps.</typeparam>
+            <param name="context">Context instance that would be shared between all steps.</param>
+            <param name="scenarioName">Scenario name.</param>
+            <param name="label">Label associated with this scenario.</param>
+            <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.RunScenario(System.Action[])">
+            <summary>
+            Runs test scenario by executing given steps in specified order.<br/>
+            If given step throws, other are not executed.<br/>
+            Scenario name is determined on the method name in which <c>RunScenario()</c> method was called.<br/>
+            Scenario label is determined on <c>[Label]</c> attribute applied on method in which <c>RunScenario()</c> method was called.<br/>
+            Please note that test project has to be compiled in DEBUG mode (assembly has <c>[assembly:Debuggable(true, true)]</c> attribute), or calling method has to have <c>[MethodImpl(MethodImplOptions.NoInlining)]</c> attribute in order to properly determine scenario name.<br/>
+            Step name is determined on corresponding action name.<br/>
+            Example usage:
+            <code>
+            [Test]
+            [Label("Ticket-1")]
+            public void Successful_login()
+            {
+                Runner.RunScenario(
+                    Given_user_is_about_to_login,
+                    Given_user_entered_valid_login,
+                    Given_user_entered_valid_password,
+                    When_user_clicked_login_button,
+                    Then_login_is_successful,
+                    Then_welcome_message_is_returned_containing_user_name);
+            }
+            </code>
+            Expected step signature:
+            <code>
+            void Given_user_is_about_to_login() { /* ... */ }
+            </code>
+            </summary>
+            <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.RunScenario(System.Linq.Expressions.Expression{System.Action{LightBDD.StepType}}[])">
+            <summary>
+            Runs test scenario by executing given steps in specified order.<br/>
+            If given step throws, other are not executed.<br/>
+            Scenario name is determined on the method name in which <c>RunScenario()</c> method was called.<br/>
+            Scenario label is determined on <c>[Label]</c> attribute applied on method in which <c>RunScenario()</c> method was called.<br/>
+            Please note that test project has to be compiled in DEBUG mode (assembly has <c>[assembly:Debuggable(true, true)]</c> attribute), or calling method has to have <c>[MethodImpl(MethodImplOptions.NoInlining)]</c> attribute in order to properly determine scenario name.<br/>
+            Step name is determined on lambda parameter reflecting action type keyword, corresponding action name and passed list of parameters to called method.<br/>
+            Please note that rules for placing parameter values in step name are as follows, where first matching rule would be used:
+            <list type="bullet">
+            <item><description>it will replace first occurrence of variable name written in capital letters (<c>void Price_is_AMOUNT_dollars(int amount)</c> => <c>Price is "27" dollars</c>)</description></item>
+            <item><description>it will placed after first occurrence of variable name (<c>void Product_is_in_stock(string product)</c> => <c>Product "desk" is in stock</c>)</description></item>
+            <item><description>it will placed at the end of step name (<c>void Product_is_in_stock(string productId)</c> => <c>Product is in stock [productId: "ABC123"]</c>)</description></item>
+            </list>
+            Example usage:
+            <code>
+            [Test]
+            [Label("Ticket-1")]
+            public void Receiving_invoice_for_products()
+            {
+                Runner.RunScenario(
+                    given => Product_is_available_in_products_storage("wooden desk"),
+                    and => Product_is_available_in_products_storage("wooden shelf"),
+                    when => Customer_buys_product("wooden desk"),
+                    and => Customer_buys_product("wooden shelf"),
+                    then => Invoice_is_sent_to_customer(),
+                    and => Invoice_contains_product_with_price_of_AMOUNT_pounds("wooden desk", 62),
+                    and => Invoice_contains_product_with_price_of_AMOUNT_pounds("wooden shelf", 37));
+            }
+            </code>
+            Expected step signature:
+            <code>
+            void Product_is_available_in_products_storage(string product) { /* ... */ }
+            </code>
+            </summary>
+            <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.RunScenario``1(System.Linq.Expressions.Expression{System.Action{LightBDD.StepType,``0}}[])">
+            <summary>
+            Runs test scenario by executing given steps in specified order, where all steps share context of <c>TContext</c> type instantiated with default constructor.<br/>
+            If given step throws, other are not executed.<br/>
+            Scenario name is determined on the method name in which <c>RunScenario()</c> method was called.<br/>
+            Scenario label is determined on <c>[Label]</c> attribute applied on method in which <c>RunScenario()</c> method was called.<br/>
+            Please note that test project has to be compiled in DEBUG mode (assembly has <c>[assembly:Debuggable(true, true)]</c> attribute), or calling method has to have <c>[MethodImpl(MethodImplOptions.NoInlining)]</c> attribute in order to properly determine scenario name.<br/>
+            Step name is determined on lambda parameter reflecting action type keyword, corresponding action name and passed list of parameters to called method.<br/>
+            It is suggested that step methods belongs to <c>TContext</c> type, however it is not required.<br/>
+            Please note that rules for placing parameter values in step name are as follows, where first matching rule would be used:
+            <list type="bullet">
+            <item><description>it will replace first occurrence of variable name written in capital letters (<c>void Price_is_AMOUNT_dollars(int amount)</c> => <c>Price is "27" dollars</c>)</description></item>
+            <item><description>it will placed after first occurrence of variable name (<c>void Product_is_in_stock(string product)</c> => <c>Product "desk" is in stock</c>)</description></item>
+            <item><description>it will placed at the end of step name (<c>void Product_is_in_stock(string productId)</c> => <c>Product is in stock [productId: "ABC123"]</c>)</description></item>
+            </list>
+            Example usage:
+            <code>
+            [Test]
+            [Label("Ticket-5")]
+            public void Should_dispatch_product_after_payment_is_finalized()
+            {
+                Runner.RunScenario&lt;SpeditionContext&gt;(
+                    (given, ctx) => ctx.There_is_an_active_customer_with_id("ABC-123"),
+                    (given, ctx) => ctx.Customer_has_product_in_basket("wooden shelf"),
+                    (given, ctx) => ctx.Customer_has_product_in_basket("wooden desk"),
+                    (when, ctx) => ctx.Customer_payment_has_been_finalized(),
+                    (then, ctx) => ctx.Product_has_been_dispatched_to_customer("wooden shelf"),
+                    (then, ctx) => ctx.Product_has_been_dispatched_to_customer("wooden desk"));
+            }
+            </code>
+            Expected step signature:
+            <code>
+            void Customer_has_product_in_basket(string product) { /* ... */ }
+            </code>
+            </summary>
+            <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.RunScenario(System.String,System.Action[])">
+            <summary>
+            Runs test scenario by executing given steps in specified order.<br/>
+            If given step throws, other are not executed.<br/>
+            Scenario name is specified in parameter list.<br/>
+            Step name is determined on corresponding action name.<br/>
+            Example usage:
+            <code>
+            [Test]
+            public void Successful_login()
+            {
+                Runner.RunScenario("My successful login",
+                    Given_user_is_about_to_login,
+                    Given_user_entered_valid_login,
+                    Given_user_entered_valid_password,
+                    When_user_clicked_login_button,
+                    Then_login_is_successful,
+                    Then_welcome_message_is_returned_containing_user_name);
+            }
+            </code>
+            Expected step signature:
+            <code>
+            void Given_user_is_about_to_login() { /* ... */ }
+            </code>
+            </summary>
+            <param name="scenarioName">Scenario name.</param>
+            <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.RunScenario(System.String,System.String,System.Action[])">
+            <summary>
+            Runs test scenario by executing given steps in specified order.<br/>
+            If given step throws, other are not executed.<br/>
+            Scenario name and label are specified in parameter list.<br/>
+            Step name is determined on corresponding action name.<br/>
+            Example usage:
+            <code>
+            [Test]
+            public void Successful_login()
+            {
+                Runner.RunScenario("My successful login", "Ticket-1",
+                    Given_user_is_about_to_login,
+                    Given_user_entered_valid_login,
+                    Given_user_entered_valid_password,
+                    When_user_clicked_login_button,
+                    Then_login_is_successful,
+                    Then_welcome_message_is_returned_containing_user_name);
+            }
+            </code>
+            Expected step signature:
+            <code>
+            void Given_user_is_about_to_login() { /* ... */ }
+            </code>
+            </summary>
+            <param name="scenarioName">Scenario name.</param>
+            <param name="label">Label associated with this scenario.</param>
+            <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.NewScenario(System.String)">
+            <summary>
+            Starts new scenario build process, where scenario name is specified by <c>scenarioName</c> parameter.<br/>
+            Method returns scenario builder object allowing to specify optional label and execution of scenario steps.<br/>
+            Build process is finished with calling one of <c>Run()</c> method family.<br/>
+            Please note that scenario would not be added to result list, until <c>Run()</c> method is called.<br/>
+            Example usage:
+            <code>
+            [Test]
+            public void Successful_login()
+            {
+                Runner.NewScenario("My successful login")
+                    .WithLabel("Ticket-1")
+                    .Run(
+                        Given_user_is_about_to_login,
+                        Given_user_entered_valid_login,
+                        Given_user_entered_valid_password,
+                        When_user_clicked_login_button,
+                        Then_login_is_successful,
+                        Then_welcome_message_is_returned_containing_user_name);
+            }
+            </code>
+            </summary>
+            <param name="scenarioName">Name of scenario.</param>
+            <returns>Scenario builder.</returns>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.NewScenario">
+            <summary>
+            Starts new scenario build process, where scenario name is determined on the method name in which <c>NewScenario()</c> method was called.<br/>
+            Scenario label is determined on <c>[Label]</c> attribute applied on method in which <c>RunScenario()</c> method was called.<br/>
+            Please note that test project has to be compiled in DEBUG mode (assembly has <c>[assembly:Debuggable(true, true)]</c> attribute), or calling method has to have <c>[MethodImpl(MethodImplOptions.NoInlining)]</c> attribute in order to properly determine scenario name.<br/>
+            
+            Scenario build process can be finalized later by calling one of <c>Run()</c> method family.<br/>
+            Please note that scenario would not be added to result list, until <c>Run()</c> method is called.<br/>
+            Example usage:
+            <code>
+            [Test]
+            [Label("Ticket-1")]
+            public void Successful_login()
+            {
+                Runner.NewScenario()
+                    .Run(
+                        Given_user_is_about_to_login,
+                        Given_user_entered_valid_login,
+                        Given_user_entered_valid_password,
+                        When_user_clicked_login_button,
+                        Then_login_is_successful,
+                        Then_welcome_message_is_returned_containing_user_name);
+            }
+            </code>
+            </summary>
+        </member>
+        <member name="M:LightBDD.AbstractBDDRunner.MapExceptionToStatus(System.Type)">
+            <summary>
+            Maps implementation specific exception to ResultStatus.
+            </summary>
+        </member>
+        <member name="P:LightBDD.AbstractBDDRunner.ProgressNotifier">
+            <summary>
+            Progress notifier.
+            </summary>
+        </member>
+        <member name="P:LightBDD.AbstractBDDRunner.Result">
+            <summary>
+            Returns feature execution result.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Execution.Exceptions.StepBypassException">
+            <summary>
+            Step bypass exception used to mark step bypassed
+            </summary>
+        </member>
+        <member name="M:LightBDD.Execution.Exceptions.StepBypassException.#ctor(System.String)">
+            <summary>
+            Constructor allowing to specify bypass reason.
+            </summary>
+            <param name="reason">Bypass reason.</param>
+        </member>
+        <member name="T:LightBDD.Execution.StepExecution">
+            <summary>
+            Step execution class, allowing to control step execution.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Execution.StepExecution.Bypass(System.String)">
+            <summary>
+            Bypasses currently executed step and continues execution of current scenario, allowing to execute all remaining steps.
+            The status of bypassed step would be <c>ResultStatus.Bypassed</c> and the overall status of scenario would be <c>ResultStatus.Bypassed</c>,
+            unless any further step is failed or ignored.<br/>
+            
+            Scenarios with <c>ResultStatus.Bypassed</c> status are recognized as passed tests in underlying test framework.<br/>
+            
+            The <c>reason</c> argument would be used as step <c>StatusDetails</c>, and it would be aggregated in overall scenario <c>StatusDetails</c> as well.<br/>
+            
+            The Bypass method could be used in situations when:
+            <list type="bullet">
+            <item><description>It is not possible to implement given step at the moment (no required API is implemented yet), but all other steps are precise enough to prove that scenario is successful, i.e. situation when scenario checks overall and detailed cost of product and one of price component cannot be retrieved.</description></item>
+            <item><description>Step implementation does not exists, but it is possible to simulate it, so further steps can be executed, i.e. end-to-end tests, where the middle component does not exist yet.</description></item>
+            <item><description>The required API is not exposed yet, but it is possible to implement a workaround like direct data insert to database.</description></item>
+            </list>
+            </summary>
+            <param name="reason">Bypass reason</param>
+            <exception cref="T:LightBDD.Execution.Exceptions.StepBypassException">Bypass exception used to control scenario execution</exception>
+        </member>
+        <member name="T:LightBDD.Configuration.LightBDDConfiguration">
+            <summary>
+            LightBDD configuration section allowing to configure feature summary writers.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Configuration.LightBDDConfiguration.SummaryWriters">
+            <summary>
+            Returns summary writers collection.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Configuration.SummaryWriterCollection">
+            <summary>
+            Collection of summary writers.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Configuration.SummaryWriterCollection.#ctor">
+            <summary>
+            Default constructor initializing collection with XmlResultFormatter/"FeaturesSummary.xml" writer.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Configuration.SummaryWriterCollection.CreateNewElement">
+            <summary>
+            Returns new SummaryWriterElement element.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Configuration.SummaryWriterCollection.GetElementKey(System.Configuration.ConfigurationElement)">
+            <summary>
+            Gets the element key for a specified configuration element.
+            </summary>
+            <param name="element">The <see cref="T:System.Configuration.ConfigurationElement"/> to return the key for. </param>
+        </member>
+        <member name="T:LightBDD.Configuration.SummaryWriterElement">
+            <summary>
+            Summary writer element allowing to associate formatter to output path.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Configuration.SummaryWriterElement.Formatter">
+            <summary>
+            Type of IResultFormatter used by summary writer.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Configuration.SummaryWriterElement.Output">
+            <summary>
+            Output path for summary writer.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Coordination.FeatureSummaryAggregator">
+            <summary>
+            Feature summary aggregator allowing to collect feature results in order to save summary in output file.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Coordination.IFeatureAggregator">
+            <summary>
+            Feature aggregator interface for collecting feature results.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Coordination.IFeatureAggregator.AddFeature(LightBDD.Results.IFeatureResult)">
+            <summary>
+            Aggregates given feature.
+            </summary>
+            <param name="feature">Feature to aggregate.</param>
+        </member>
+        <member name="M:LightBDD.Coordination.IFeatureAggregator.Finished">
+            <summary>
+            Notifies aggregator that no more features would be added.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Coordination.FeatureSummaryAggregator.#ctor">
+            <summary>
+            Default constructor, using XmlResultsFormatter for summary formatting and default summary path (see GetDefaultSummaryPath()).
+            </summary>
+        </member>
+        <member name="M:LightBDD.Coordination.FeatureSummaryAggregator.GetDefaultSummaryPath">
+            <summary>
+            returns path to "FeaturesSummary.xml" located current directory.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Coordination.FeatureSummaryAggregator.#ctor(LightBDD.Results.Formatters.IResultFormatter,System.String)">
+            <summary>
+            Constructor allowing to specify result formatter and output file path. 
+            </summary>
+            <param name="resultFormatter">Formatter.</param>
+            <param name="filePath">Output file path.</param>
+        </member>
+        <member name="M:LightBDD.Coordination.FeatureSummaryAggregator.AddFeature(LightBDD.Results.IFeatureResult)">
+            <summary>
+            Aggregates given feature.
+            </summary>
+            <param name="feature">Feature to aggregate.</param>
+        </member>
+        <member name="M:LightBDD.Coordination.FeatureSummaryAggregator.Finished">
+            <summary>
+            Notifies aggregator that no more features would be added.
+            This implementation saves result summary in file.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Coordination.FeatureSummaryAggregator.FilePath">
+            <summary>
+            File path where summary would be saved.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Execution.ICustomizedScenarioBuilder">
+            <summary>
+            Customized scenario builder interface that allows to build and execute customized scenario in fluent way.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Execution.IScenarioBuilder">
+            <summary>
+            Scenario builder interface that allows to build and execute scenario in fluent way.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Execution.IScenarioBuilder.WithContext``1">
+            <summary>
+            Specifies that scenario would be executed in dedicated context of <c>TContext</c> type.<br/>
+            Context instance would be created by calling default constructor.
+            </summary>
+            <typeparam name="TContext">Context type</typeparam>
+            <returns>Scenario builder</returns>
+        </member>
+        <member name="M:LightBDD.Execution.IScenarioBuilder.WithContext``1(``0)">
+            <summary>
+            Specifies that scenario would be executed in dedicated <c>context</c> instance of <c>TContext</c> type.
+            </summary>
+            <typeparam name="TContext">Context type</typeparam>
+            <param name="instance">Context instance</param>
+            <returns>Scenario builder</returns>
+        </member>
+        <member name="M:LightBDD.Execution.IScenarioBuilder.Run(System.Action[])">
+            <summary>
+            Completes scenario build process and runs given steps in specified order.<br/>
+            If any step throws, other are not executed and exception is propagated to calling method.
+            Example usage:
+            <code>
+            [Test]
+            public void Successful_login()
+            {
+                Runner.NewScenario()
+                    .Run(
+                        Given_user_is_about_to_login,
+                        Given_user_entered_valid_login,
+                        Given_user_entered_valid_password,
+                        When_user_clicked_login_button,
+                        Then_login_is_successful,
+                        Then_welcome_message_is_returned_containing_user_name);
+            }
+            </code>
+            Expected step signature:
+            <code>
+            void Given_user_is_about_to_login() { /* ... */ }
+            </code>
+            </summary>
+            <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="M:LightBDD.Execution.IScenarioBuilder.Run(System.Linq.Expressions.Expression{System.Action{LightBDD.StepType}}[])">
+            <summary>
+            Completes scenario build process and runs given steps in specified order.<br/>
+            If any step throws, other are not executed and exception is propagated to calling method.<br/>
+            Step name is determined on lambda parameter reflecting action type keyword, corresponding action name and passed list of parameters to called method.<br/>
+            Please note that rules for placing parameter values in step name are as follows, where first matching rule would be used:
+            <list type="bullet">
+            <item><description>it will replace first occurrence of variable name written in capital letters (<c>void Price_is_AMOUNT_dollars(int amount)</c> => <c>Price is "27" dollars</c>)</description></item>
+            <item><description>it will placed after first occurrence of variable name (<c>void Product_is_in_stock(string product)</c> => <c>Product "desk" is in stock</c>)</description></item>
+            <item><description>it will placed at the end of step name (<c>void Product_is_in_stock(string productId)</c> => <c>Product is in stock [productId: "ABC123"]</c>)</description></item>
+            </list>
+            Example usage:
+            <code>
+            [Test]
+            [Label("Ticket-1")]
+            public void Receiving_invoice_for_products()
+            {
+                Runner.NewScenario()
+                    .Run(
+                        given => Product_is_available_in_products_storage("wooden desk"),
+                        and => Product_is_available_in_products_storage("wooden shelf"),
+                        when => Customer_buys_product("wooden desk"),
+                        and => Customer_buys_product("wooden shelf"),
+                        then => Invoice_is_sent_to_customer(),
+                        and => Invoice_contains_product_with_price_of_AMOUNT_pounds("wooden desk", 62),
+                        and => Invoice_contains_product_with_price_of_AMOUNT_pounds("wooden shelf", 37));
+            }
+            </code>
+            Expected step signature:
+            <code>
+            void Product_is_available_in_products_storage(string product) { /* ... */ }
+            </code>
+            </summary>
+            <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="M:LightBDD.Execution.ICustomizedScenarioBuilder.WithLabel(System.String)">
+            <summary>
+            Associates label with scenario.
+            
+            Example usage:
+            <code>
+            [Test]
+            public void Successful_login()
+            {
+                Runner.NewScenario("My successful login")
+                    .WithLabel("Ticket-1")
+                    .Run(
+                        Given_user_is_about_to_login,
+                        Given_user_entered_valid_login,
+                        Given_user_entered_valid_password,
+                        When_user_clicked_login_button,
+                        Then_login_is_successful,
+                        Then_welcome_message_is_returned_containing_user_name);
+            }
+            </code>
+            </summary>
+            <param name="label">Label to associate with scenario.</param>
+            <returns>Scenario builder</returns>
+        </member>
+        <member name="M:LightBDD.Execution.ICustomizedScenarioBuilder.WithCategories(System.String[])">
+            <summary>
+            Associates list of categories with scenario.
+            </summary>
+            <param name="categories">Categories to associate.</param>
+            <returns>Scenario builder</returns>
+        </member>
+        <member name="T:LightBDD.Execution.IScenarioBuilder`1">
+            <summary>
+            Scenario builder interface that allows to build and execute scenario in fluent way.
+            This version of builder guarantees that scenario would be executed in dedicated context of <c>TContext</c> type.
+            <typeparam name="TContext">Type of context that would be shared between all steps.</typeparam>
+            </summary>
+        </member>
+        <member name="M:LightBDD.Execution.IScenarioBuilder`1.Run(System.Action{`0}[])">
+            <summary>
+            Completes scenario build process and executes given steps in specified order, where all steps share context of <c>TContext</c> type instantiated with default constructor.<br/>
+            If any step throws, other are not executed and exception is propagated to calling method.<br/>
+            Example usage:
+            <code>
+            [Test]
+            public void Successful_login()
+            {
+                Runner.NewScenario()
+                    .WithContext&lt;LoginContext&gt;()
+                    .Run(
+                        Given_user_is_about_to_login,
+                        Given_user_entered_valid_login,
+                        Given_user_entered_valid_password,
+                        When_user_clicked_login_button,
+                        Then_login_is_successful,
+                        Then_welcome_message_is_returned_containing_user_name);
+            }
+            </code>
+            Expected step signature:
+            <code>
+            void Given_user_is_about_to_login(LoginContext context) { /* ... */ }
+            </code>
+            </summary>
+            <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="M:LightBDD.Execution.IScenarioBuilder`1.Run(System.Linq.Expressions.Expression{System.Action{LightBDD.StepType,`0}}[])">
+            <summary>
+            Completes scenario build process and executes given steps in specified order, where all steps share context of <c>TContext</c> type instantiated with default constructor.<br/>
+            If any step throws, other are not executed and exception is propagated to calling method.<br/>
+            Step name is determined on lambda parameter reflecting action type keyword, corresponding action name and passed list of parameters to called method.<br/>
+            It is suggested that step methods belongs to <c>TContext</c> type, however it is not required.<br/>
+            Please note that rules for placing parameter values in step name are as follows, where first matching rule would be used:
+            <list type="bullet">
+            <item><description>it will replace first occurrence of variable name written in capital letters (<c>void Price_is_AMOUNT_dollars(int amount)</c> => <c>Price is "27" dollars</c>)</description></item>
+            <item><description>it will placed after first occurrence of variable name (<c>void Product_is_in_stock(string product)</c> => <c>Product "desk" is in stock</c>)</description></item>
+            <item><description>it will placed at the end of step name (<c>void Product_is_in_stock(string productId)</c> => <c>Product is in stock [productId: "ABC123"]</c>)</description></item>
+            </list>
+            Example usage:
+            <code>
+            [Test]
+            [Label("Ticket-5")]
+            public void Should_dispatch_product_after_payment_is_finalized()
+            {
+                Runner.NewScenario()
+                    .WithContext&lt;SpeditionContext&gt;()
+                    .Run(
+                        (given, ctx) => ctx.There_is_an_active_customer_with_id("ABC-123"),
+                        (given, ctx) => ctx.Customer_has_product_in_basket("wooden shelf"),
+                        (given, ctx) => ctx.Customer_has_product_in_basket("wooden desk"),
+                        (when, ctx) => ctx.Customer_payment_has_been_finalized(),
+                        (then, ctx) => ctx.Product_has_been_dispatched_to_customer("wooden shelf"),
+                        (then, ctx) => ctx.Product_has_been_dispatched_to_customer("wooden desk"));
+            }
+            </code>
+            Expected step signature:
+            <code>
+            void Customer_has_product_in_basket(string product) { /* ... */ }
+            </code>
+            </summary>
+            <param name="steps">List of steps to execute in order.</param>
+        </member>
+        <member name="T:LightBDD.Formatting.Parameters.FormatBooleanAttribute">
+            <summary>
+            Attribute allowing to define formatting rules for step parameter of boolean type.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Formatting.Parameters.ParameterFormatterAttribute">
+            <summary>
+            Parameter formatter attribute, allowing to define custom step parameter formatting method
+            </summary>
+        </member>
+        <member name="M:LightBDD.Formatting.Parameters.ParameterFormatterAttribute.Format(System.Object)">
+            <summary>
+            Formats given parameter.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Formatting.Parameters.FormatBooleanAttribute.#ctor(System.String,System.String)">
+            <summary>
+            Constructor allowing to associate string constants that would be used for true and false value.
+            </summary>
+            <param name="trueValue">String constant used for true value.</param>
+            <param name="falseValue">String constant used for false value.</param>
+        </member>
+        <member name="M:LightBDD.Formatting.Parameters.FormatBooleanAttribute.Format(System.Object)">
+            <summary>
+            Formats given parameter.
+            </summary>
+        </member>
+        <member name="T:LightBDD.ScenarioCategoryAttribute">
+             <summary>
+             Scenario category attribute that can be applied on scenario test method.
+             May be used to associate scenarios with specific categories.
+             It is possible to apply multiple ScenarioCategory attributes on given scenario.
+            
+             If given implementation supports alternative category attributes, and both are applied on scenario method, all of them would be used.
+             </summary>
+        </member>
+        <member name="M:LightBDD.ScenarioCategoryAttribute.#ctor(System.String)">
+            <summary>
+            Constructor accepting category name.
+            </summary>
+        </member>
+        <member name="P:LightBDD.ScenarioCategoryAttribute.Name">
+            <summary>
+            Feature description.
+            </summary>
+        </member>
+        <member name="T:LightBDD.FeatureDescriptionAttribute">
+             <summary>
+             Feature description attribute that can be applied on feature test class.
+             May be used to enrich feature class with description like "In order to... As a... I want to..."
+             or similar, that would be used by progress notifier and would be included in summary.
+            
+             If given implementation supports alternative description attributes, and both are applied on class, this one would be used.
+             </summary>
+        </member>
+        <member name="M:LightBDD.FeatureDescriptionAttribute.#ctor(System.String)">
+            <summary>
+            Constructor allowing to associate description.
+            </summary>
+        </member>
+        <member name="P:LightBDD.FeatureDescriptionAttribute.Description">
+            <summary>
+            Feature description.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Formatting.Parameters.FormatAttribute">
+            <summary>
+            Attribute allowing to define how step parameter should be formatted.
+            FormatAttribute uses current CultureInfo to format parameters.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Formatting.Parameters.FormatAttribute.#ctor(System.String)">
+            <summary>
+            Constructor allowing to define how step parameter should be formatted.
+            The <c>format</c> argument represents string.Format() format parameter, where {0} would be a passed parameter instance.
+            FormatAttribute uses current CultureInfo to format parameters.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Formatting.Parameters.FormatAttribute.Format(System.Object)">
+            <summary>
+            Formats given parameter.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Formatting.Helpers.TimeFormatter">
+            <summary>
+            Extension methods for formatting TimeSpan values.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Formatting.Helpers.TimeFormatter.FormatPretty(System.Nullable{System.TimeSpan})">
+            <summary>
+            Formats given value if provided or returns empty string.
+            
+            This method returns up to 2 most meaningful time components of given time, to make it most readable.
+            Maximal supported time component is 'day', while the minimal is 'millisecond'.
+            TimeSpan value being less than 1ms but larger than 0 would be presented as &lt;1ms. 
+            
+            Example values:
+            <list type="bullet">
+            <item><description>1d 12h</description></item>
+            <item><description>5h</description></item>
+            <item><description>5m 02s</description></item>
+            <item><description>2s 527ms</description></item>
+            <item><description>&lt;1ms</description></item>
+            <item><description>0ms</description></item>
+            </list>
+            </summary>
+        </member>
+        <member name="M:LightBDD.Formatting.Helpers.TimeFormatter.FormatPretty(System.TimeSpan)">
+            <summary>
+            This method returns up to 2 most meaningful time components of given time, to make it most readable.
+            Maximal supported time component is 'day', while the minimal is 'millisecond'.
+            TimeSpan value being less than 1ms but larger than 0 would be presented as &lt;1ms. 
+            
+            Example values:
+            <list type="bullet">
+            <item><description>1d 12h</description></item>
+            <item><description>5h</description></item>
+            <item><description>5m 02s</description></item>
+            <item><description>2s 527ms</description></item>
+            <item><description>&lt;1ms</description></item>
+            <item><description>0ms</description></item>
+            </list>
+            </summary>
+        </member>
+        <member name="T:LightBDD.LabelAttribute">
+            <summary>
+            Label attribute that can be applied on feature test class or scenario method.
+            May be used to link feature/scenario with external tools by storing ticket number.
+            </summary>
+        </member>
+        <member name="M:LightBDD.LabelAttribute.#ctor(System.String)">
+            <summary>
+            Constructor allowing to associate label text.
+            </summary>
+            <param name="label">Label.</param>
+        </member>
+        <member name="P:LightBDD.LabelAttribute.Label">
+            <summary>
+            Specified label.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Naming.IStepNameDecorator">
+            <summary>
+            Interface decorating step name.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Naming.IStepNameDecorator.DecorateStepTypeName(System.String)">
+            <summary>
+            Decorates step type name.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Naming.IStepNameDecorator.DecorateParameterValue(LightBDD.Results.IStepParameter)">
+            <summary>
+            Decorates parameter value.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Naming.IStepNameDecorator.DecorateNameFormat(System.String)">
+            <summary>
+            Decorates name format.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Naming.StepNameDecorators">
+            <summary>
+            Class providing step name decorator instances.
+            </summary>
+        </member>
+        <member name="F:LightBDD.Naming.StepNameDecorators.Default">
+            <summary>
+            Default step name decorator, where:
+            * step type is returned intact if not null, or string.Empty is returned,
+            * parameter value is returned intact if not null, or string.Empty is returned,
+            * name format is returned intact if not null, or string.Empty is returned.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Notification.ConsoleProgressNotifier">
+            <summary>
+            Progress notifier using console for displaying progress.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Notification.IProgressNotifier">
+            <summary>
+            Interface for progress notification.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Notification.IProgressNotifier.NotifyFeatureStart(System.String,System.String,System.String)">
+            <summary>
+            Notifies that feature has been started.
+            </summary>
+            <param name="featureName">Feature name.</param>
+            <param name="featureDescription">Feature description.</param>
+            <param name="label">Feature label.</param>
+        </member>
+        <member name="M:LightBDD.Notification.IProgressNotifier.NotifyScenarioFinished(LightBDD.Results.IScenarioResult)">
+            <summary>
+            Notifies that scenario has been finished with given status and optional details.
+            </summary>
+            <param name="scenarioResult">Scenario result</param>
+        </member>
+        <member name="M:LightBDD.Notification.IProgressNotifier.NotifyScenarioStart(System.String,System.String)">
+            <summary>
+            Notifies that scenario has been started.
+            </summary>
+            <param name="scenarioName">Scenario name.</param>
+            <param name="label">Scenario label.</param>
+        </member>
+        <member name="M:LightBDD.Notification.IProgressNotifier.NotifyStepStart(System.String,System.Int32,System.Int32)">
+            <summary>
+            Notifies that step has been started.
+            </summary>
+            <param name="stepName">Step name.</param>
+            <param name="stepNumber">Step number starting from 1.</param>
+            <param name="totalStepCount">Total number of steps.</param>
+        </member>
+        <member name="M:LightBDD.Notification.IProgressNotifier.NotifyStepFinished(LightBDD.Results.IStepResult,System.Int32)">
+            <summary>
+            Notifies that step execution has been finished.
+            </summary>
+            <param name="stepResult">Step result.</param>
+            <param name="totalStepCount">Total step count</param>
+        </member>
+        <member name="M:LightBDD.Notification.ConsoleProgressNotifier.NotifyScenarioStart(System.String,System.String)">
+            <summary>
+            Notifies that scenario has been started.
+            </summary>
+            <param name="scenarioName">Scenario name.</param>
+            <param name="label">Scenario label.</param>
+        </member>
+        <member name="M:LightBDD.Notification.ConsoleProgressNotifier.NotifyStepStart(System.String,System.Int32,System.Int32)">
+            <summary>
+            Notifies that step has been started.
+            </summary>
+            <param name="stepName">Step name.</param>
+            <param name="stepNumber">Step number starting from 1.</param>
+            <param name="totalStepCount">Total number of steps.</param>
+        </member>
+        <member name="M:LightBDD.Notification.ConsoleProgressNotifier.NotifyStepFinished(LightBDD.Results.IStepResult,System.Int32)">
+            <summary>
+            Notifies that step execution has been finished.
+            </summary>
+            <param name="stepResult">Step result.</param>
+            <param name="totalStepCount">Total step count</param>
+        </member>
+        <member name="M:LightBDD.Notification.ConsoleProgressNotifier.NotifyFeatureStart(System.String,System.String,System.String)">
+            <summary>
+            Notifies that feature has been started.
+            </summary>
+            <param name="featureName">Feature name.</param>
+            <param name="featureDescription">Feature description.</param>
+            <param name="label">Feature label.</param>
+        </member>
+        <member name="M:LightBDD.Notification.ConsoleProgressNotifier.NotifyScenarioFinished(LightBDD.Results.IScenarioResult)">
+            <summary>
+            Notifies that scenario has been finished with given status and optional details.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Results.FeatureSummaryExtensions">
+            <summary>
+            Helper methods to work on feature results
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.FeatureSummaryExtensions.GetTestExecutionStartTime(System.Collections.Generic.IEnumerable{LightBDD.Results.IFeatureResult})">
+            <summary>
+            Returns time when first scenario has started executing based on Scenario ExecutionStart property.
+            If no scenarios have been executed, UtcNow is returned.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.FeatureSummaryExtensions.GetTestExecutionTime(System.Collections.Generic.IEnumerable{LightBDD.Results.IFeatureResult})">
+            <summary>
+            Returns total test execution time based on Scenario ExecutionTime property.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.FeatureSummaryExtensions.GetTestExecutionTime(System.Collections.Generic.IEnumerable{LightBDD.Results.IScenarioResult})">
+            <summary>
+            Returns total test execution time based on Scenario ExecutionTime property.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.FeatureSummaryExtensions.GetTestAverageExecutionTime(System.Collections.Generic.IEnumerable{LightBDD.Results.IScenarioResult})">
+            <summary>
+            Returns average test execution time based on Scenario ExecutionTime property.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.FeatureSummaryExtensions.CountScenariosWithStatus(LightBDD.Results.IFeatureResult,LightBDD.Results.ResultStatus)">
+            <summary>
+            Counts scenarios that belongs to given feature and have given status.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.FeatureSummaryExtensions.CountScenariosWithStatus(System.Collections.Generic.IEnumerable{LightBDD.Results.IFeatureResult},LightBDD.Results.ResultStatus)">
+            <summary>
+            Counts all scenarios with given status.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.FeatureSummaryExtensions.CountScenarios(System.Collections.Generic.IEnumerable{LightBDD.Results.IFeatureResult})">
+            <summary>
+            Counts all scenarios.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.FeatureSummaryExtensions.CountSteps(System.Collections.Generic.IEnumerable{LightBDD.Results.IFeatureResult})">
+            <summary>
+            Counts all steps.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.FeatureSummaryExtensions.CountSteps(LightBDD.Results.IFeatureResult)">
+            <summary>
+            Counts all steps.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.FeatureSummaryExtensions.CountStepsWithStatus(LightBDD.Results.IFeatureResult,LightBDD.Results.ResultStatus)">
+            <summary>
+            Counts all steps with given status.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.FeatureSummaryExtensions.CountStepsWithStatus(LightBDD.Results.IScenarioResult,LightBDD.Results.ResultStatus)">
+            <summary>
+            Counts all steps with given status.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.FeatureSummaryExtensions.CountStepsWithStatus(System.Collections.Generic.IEnumerable{LightBDD.Results.IFeatureResult},LightBDD.Results.ResultStatus)">
+            <summary>
+            Counts all steps with given status.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Results.Formatters.HtmlResultFormatter">
+            <summary>
+            Formats feature results as HTML.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Results.Formatters.IResultFormatter">
+            <summary>
+            Result formatter interface.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.Formatters.IResultFormatter.Format(LightBDD.Results.IFeatureResult[])">
+            <summary>
+            Formats feature results.
+            </summary>
+            <param name="features">Features to format.</param>
+        </member>
+        <member name="M:LightBDD.Results.Formatters.HtmlResultFormatter.Format(LightBDD.Results.IFeatureResult[])">
+            <summary>
+            Formats feature results.
+            </summary>
+            <param name="features">Features to format.</param>
+        </member>
+        <member name="T:LightBDD.Results.Formatters.PlainTextResultFormatter">
+            <summary>
+            Formats feature results as plain text.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.Formatters.PlainTextResultFormatter.Format(LightBDD.Results.IFeatureResult[])">
+            <summary>
+            Formats feature results.
+            </summary>
+            <param name="features">Features to format.</param>
+        </member>
+        <member name="T:LightBDD.Results.IFeatureResult">
+            <summary>
+            Interface describing feature test result.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IFeatureResult.Description">
+            <summary>
+            Feature description.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IFeatureResult.Label">
+            <summary>
+            [Label] attribute associated to feature.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IFeatureResult.Name">
+            <summary>
+            Feature name.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IFeatureResult.Scenarios">
+            <summary>
+            Returns executed scenarios for given feature.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Results.IStepName">
+            <summary>
+            Interface describing step name.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.IStepName.Format(LightBDD.Naming.IStepNameDecorator)">
+            <summary>
+            Formats full step name with given formatter.
+            The returned name would contain StepTypeName followed by NameFormat with parameter values.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IStepName.NameFormat">
+            <summary>
+            Returns step name format string where {n} parameter corresponds to nth element of ParameterValues.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IStepName.Parameters">
+            <summary>
+            Parameter values used for this step.
+            If step has been evaluated, ParameterValues would contain preformatted (with InvariantCulture) values of captured step parameters.
+            If step has not been evaluated, ParameterValues may contain 
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IStepName.StepTypeName">
+            <summary>
+            Step type name or null if not present.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Results.IStepParameter">
+            <summary>
+            Interface describing step parameter.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IStepParameter.IsEvaluated">
+            <summary>
+            True if parameter value has been evaluated.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IStepParameter.FormattedValue">
+            <summary>
+            Formatted parameter value (with InvariantCulture), or &lt;?&gt; if parameter has not been evaluated.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Results.IScenarioResult">
+            <summary>
+            Interface describing scenario test result.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IScenarioResult.Label">
+            <summary>
+            [Label] attribute associated to scenario.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IScenarioResult.Name">
+            <summary>
+            Scenario name.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IScenarioResult.Status">
+            <summary>
+            Scenario status.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IScenarioResult.StatusDetails">
+            <summary>
+            Status details.
+            It is useful for ignored or failed tests.
+            It may be null if no additional details are provided.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IScenarioResult.Steps">
+            <summary>
+            Scenario steps.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IScenarioResult.ExecutionTime">
+            <summary>
+            Scenario execution time.
+            Null if scenario was not run.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IScenarioResult.ExecutionStart">
+            <summary>
+            Time when scenario execution started.
+            Null if scenario was not run.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IScenarioResult.Categories">
+            <summary>
+            Returns categories associated with scenario.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Results.IStepResult">
+            <summary>
+            Interface describing scenario step test result.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IStepResult.Name">
+            <summary>
+            Step name.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IStepResult.Number">
+            <summary>
+            Step number.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IStepResult.Status">
+            <summary>
+            Step status.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IStepResult.StatusDetails">
+            <summary>
+            Status details.
+            It is useful for ignored or failed tests.
+            It may be null if no additional details are provided.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IStepResult.ExecutionTime">
+            <summary>
+            Step execution time.
+            Null if step was not run.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IStepResult.ExecutionStart">
+            <summary>
+            Time when step method execution started.
+            Null if step was not run.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Results.IStepResult.StepName">
+            <summary>
+            Returns step name details.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Results.ResultStatus">
+            <summary>
+            Represents status of test / scenario.
+            </summary>
+        </member>
+        <member name="F:LightBDD.Results.ResultStatus.NotRun">
+            <summary>
+            Not run yet
+            </summary>
+        </member>
+        <member name="F:LightBDD.Results.ResultStatus.Passed">
+            <summary>
+            Passed
+            </summary>
+        </member>
+        <member name="F:LightBDD.Results.ResultStatus.Bypassed">
+            <summary>
+            Bypassed
+            </summary>
+        </member>
+        <member name="F:LightBDD.Results.ResultStatus.Ignored">
+            <summary>
+            Ignored / skipped
+            </summary>
+        </member>
+        <member name="F:LightBDD.Results.ResultStatus.Failed">
+            <summary>
+            Failed
+            </summary>
+        </member>
+        <member name="T:LightBDD.Coordination.FeatureCoordinator">
+            <summary>
+            Feature coordinator singleton class allowing to collect feature results, pass them to specified aggregator and notify it when all tests finished.
+            It allows to customize aggregator - by default it is FeatureSummaryAggregator that saves feature results to XML.
+            This class guarantees aggregator notification on AppDomain unload, but offers also method to notify aggregator manually.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Coordination.FeatureCoordinator.#ctor(LightBDD.Coordination.IFeatureAggregator)">
+            <summary>
+            Default constructor.
+            </summary>
+            <param name="aggregator">Aggregator to use.</param>
+        </member>
+        <member name="M:LightBDD.Coordination.FeatureCoordinator.AddFeature(LightBDD.Results.IFeatureResult)">
+            <summary>
+            Adds feature to aggregator.
+            </summary>
+            <param name="feature">Feature to aggregate.</param>
+        </member>
+        <member name="M:LightBDD.Coordination.FeatureCoordinator.Finished">
+            <summary>
+            Notifies aggregator that all features has been already added.
+            PLEASE NOTE that this method does not have to be normally called - FeatureCoordinator will notify aggregator on AppDomain unload anyway.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Coordination.FeatureCoordinator.Finalize">
+            <summary>
+            Notifies aggregator that all features has been already added.
+            </summary>
+        </member>
+        <member name="E:LightBDD.Coordination.FeatureCoordinator.OnBeforeFinish">
+            <summary>
+            Event emitted just before Aggregator.Finished() method is called;
+            </summary>
+        </member>
+        <member name="E:LightBDD.Coordination.FeatureCoordinator.OnAfterFinish">
+            <summary>
+            Event emitted just after Aggregator.Finished() method is called;
+            </summary>
+        </member>
+        <member name="P:LightBDD.Coordination.FeatureCoordinator.Instance">
+            <summary>
+            Coordinator instance.
+            </summary>
+        </member>
+        <member name="P:LightBDD.Coordination.FeatureCoordinator.Aggregator">
+             <summary>
+             Aggregator used to collect feature results.
+             
+             By default, SummaryGenerator is used, which configuration is read from app.config file.
+             The following code presents how default SummaryGenerator can be configured:
+             <code>
+             &lt;?xml version="1.0" encoding="utf-8" ?&gt;
+            &lt;configuration&gt;
+              &lt;configSections&gt;
+                &lt;section name="lightbdd" type="LightBDD.Configuration.LightBDDConfiguration, LightBDD"/&gt;
+              &lt;/configSections&gt;
+              &lt;lightbdd&gt;
+                &lt;summaryWriters&gt;
+                  &lt;!-- FeatureSummary.xml is added by default. Use &lt;clear /&gt; to remove it.--&gt;
+                  &lt;add formatter="LightBDD.Results.Formatters.PlainTextResultFormatter, LightBDD" output="FeatureSummary.txt"/&gt;
+                  &lt;add formatter="LightBDD.Results.Formatters.HtmlResultFormatter, LightBDD" output="FeatureSummary.html"/&gt;
+                &lt;/summaryWriters&gt;
+              &lt;/lightbdd&gt;
+            &lt;/configuration&gt;
+             </code>
+             
+             It is also possible to customize aggregator by redefining it's value - the best time to set it is before any tests run (like in class with [SetUpFixture] attribute).
+             </summary>
+        </member>
+        <member name="T:LightBDD.StepType">
+            <summary>
+            Helper type used to indicate lambda parameter that is used to determine type of step (like <c>given</c>, <c>when</c>, <c>then</c>, <c>and</c> etc.).
+            Used purely by reflection mechanisms.
+            </summary>
+        </member>
+        <member name="T:LightBDD.SummaryGeneration.ISummaryWriter">
+            <summary>
+            Interface for feature result summary writers.
+            </summary>
+        </member>
+        <member name="M:LightBDD.SummaryGeneration.ISummaryWriter.Save(LightBDD.Results.IFeatureResult[])">
+            <summary>
+            Saves feature <c>results</c>.
+            </summary>
+            <param name="results">Results to save.</param>
+        </member>
+        <member name="T:LightBDD.SummaryGeneration.SummaryGenerator">
+            <summary>
+            SummaryGenerator class allowing to generate and save summary for executed feature scenarios.
+            It supports multiple summary writers that can be specified in constructor.
+            </summary>
+        </member>
+        <member name="M:LightBDD.SummaryGeneration.SummaryGenerator.#ctor(LightBDD.SummaryGeneration.ISummaryWriter[])">
+            <summary>
+            Class constructor allowing to specify summary writers that would be used to save feature summary.
+            </summary>
+            <param name="summaryWriters"></param>
+        </member>
+        <member name="M:LightBDD.SummaryGeneration.SummaryGenerator.AddFeature(LightBDD.Results.IFeatureResult)">
+            <summary>
+            Adds given feature to summary.
+            </summary>
+            <param name="feature">Feature result.</param>
+        </member>
+        <member name="M:LightBDD.SummaryGeneration.SummaryGenerator.Finished">
+            <summary>
+            Saves all aggregated feature results by using summary writers specified in constructor.
+            </summary>
+        </member>
+        <member name="T:LightBDD.SummaryGeneration.SummaryFileWriter">
+            <summary>
+            Summary file writer class allows to save feature results by using associated result formatter and output path.
+            </summary>
+        </member>
+        <member name="M:LightBDD.SummaryGeneration.SummaryFileWriter.#ctor(LightBDD.Results.Formatters.IResultFormatter,System.String)">
+            <summary>
+            Constructor allowing to create SummaryFileWriter with associated result formatter and output path.
+            </summary>
+            <param name="formatter">Result formatter.</param>
+            <param name="outputPath">Output path.</param>
+        </member>
+        <member name="M:LightBDD.SummaryGeneration.SummaryFileWriter.Save(LightBDD.Results.IFeatureResult[])">
+            <summary>
+            Saves formatted feature <c>results</c> to file specified in constructor.
+            If output path refers to directory which does not exist, it will be created.
+            </summary>
+            <param name="results">Results to save.</param>
+        </member>
+        <member name="T:LightBDD.TestMetadataProvider">
+            <summary>
+            Test metadata provider allows to retrieve scenario and feature metadata such as descriptions, labels or names.
+            </summary>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.ExtractAttributePropertyValue``1(System.Reflection.MemberInfo,System.Func{``0,System.String})">
+            <summary>
+            Retrieves specified attribute property value.
+            </summary>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.ExtractAttributePropertyValues``1(System.Reflection.MemberInfo,System.Func{``0,System.String})">
+            <summary>
+            Retrieves specified attribute property value for all attribute instances applied on given member.
+            </summary>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.ExtractAttributes``1(System.Reflection.MemberInfo)">
+            <summary>
+            Retrieves specified attributes applied on given member.
+            </summary>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.GetFeatureDescription(System.Type)">
+            <summary>
+            Retrieves feature description from [FeatureDescription] attribute.
+            If attribute is not defined for feature test class, implementation specific feature description is returned.
+            </summary>
+            <returns>Feature description string or null if no description is defined.</returns>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.GetFeatureLabel(System.Type)">
+            <summary>
+            Retrieves feature label from [Label] attribute or null if attribute is not defined.
+            </summary>
+            <returns>Feature label string or null if label is not defined.</returns>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.GetFeatureName(System.Type)">
+            <summary>
+            Retrieves feature name which bases on name of feature test class.
+            </summary>
+            <returns>Feature name.</returns>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.GetScenarioCategories(System.Reflection.MethodBase)">
+            <summary>
+            Retrieves scenario categories from [ScenarioCategory] attribute as well as from implementation specific sources.
+            </summary>
+            <returns>Scenario categories</returns>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.GetScenarioLabel(System.Reflection.MethodBase)">
+            <summary>
+            Retrieves scenario label from [Label] attribute or null if attribute is not defined.
+            </summary>
+            <returns>Scenario label string or null if label is not defined.</returns>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.GetScenarioName(System.Reflection.MethodBase)">
+            <summary>
+            Retrieves scenario name which bases on name of scenario method.
+            </summary>
+            <returns>Scenario name.</returns>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.GetStepName(System.Reflection.MethodBase)">
+            <summary>
+            Returns step name which bases on name of scenario step method.
+            </summary>
+            <returns>Step name.</returns>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.GetImplementationSpecificFeatureDescription(System.Type)">
+            <summary>
+            Returns implementation specific feature description or null if such is not provided.
+            </summary>
+            <param name="testClass">Class to analyze.</param>
+            <returns>Feature description or null.</returns>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.GetImplementationSpecificScenarioCategories(System.Reflection.MemberInfo)">
+            <summary>
+            Returns implementation specific scenario categories or empty collection if no categories are provided.
+            </summary>
+            <param name="member">Scenario method or feature test class to analyze.</param>
+            <returns>Scenario categories or empty collection.</returns>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.GetStepNameFormat(System.Reflection.MethodInfo)">
+            <summary>
+            Returns step name format which bases on name of scenario step method and method parameters.<br/>
+            If method is parameterized, the step name would contain format parameters {n} that would be replaced with argument values (where {0} refers to first argument) during step execution.<br/>
+            Please note that rules for placing parameter values in step name are as follows, where first matching rule would be used:
+            <list type="bullet">
+            <item><description>it will replace first occurrence of variable name written in capital letters (<c>void Price_is_AMOUNT_dollars(int amount)</c> => <c>Price is "27" dollars</c>)</description></item>
+            <item><description>it will placed after first occurrence of variable name (<c>void Product_is_in_stock(string product)</c> => <c>Product "desk" is in stock</c>)</description></item>
+            <item><description>it will placed at the end of step name (<c>void Product_is_in_stock(string productId)</c> => <c>Product is in stock [productId: "ABC123"]</c>)</description></item>
+            </list>
+            </summary>
+            <param name="stepMethod">Step method.</param>
+            <returns>Step name.</returns>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.GetStepNameFormat(System.String,System.Reflection.MethodInfo)">
+            <summary>
+            This method is obsoleted.
+            Please use string GetStepNameFormat(MethodInfo stepMethod)
+            </summary>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.GetStepTypeName(System.String)">
+            <summary>
+            Returns formatted and capitalized step type name or string.Empty if step is meaningless.
+            </summary>
+        </member>
+        <member name="M:LightBDD.TestMetadataProvider.GetStepParameterFormatter(System.Reflection.ParameterInfo)">
+            <summary>
+            Returns step parameter formatter from associated ParameterFormatterAttribute or default one.
+            </summary>
+        </member>
+        <member name="T:LightBDD.TestResultsSummary">
+            <summary>
+            Tests results summary class for collecting feature results and saving it to specified file.
+            </summary>
+        </member>
+        <member name="M:LightBDD.TestResultsSummary.#ctor">
+            <summary>
+            Default constructor. Uses XmlResultFormatter.
+            </summary>
+        </member>
+        <member name="M:LightBDD.TestResultsSummary.#ctor(LightBDD.Results.Formatters.IResultFormatter)">
+            <summary>
+            Constructor allowing to define formatter type.
+            </summary>
+            <param name="formatter">Results formatter.</param>
+        </member>
+        <member name="M:LightBDD.TestResultsSummary.AddResult(LightBDD.Results.IFeatureResult)">
+            <summary>
+            Adds feature result to summary.
+            </summary>
+            <param name="result">Feature result to add.</param>
+        </member>
+        <member name="M:LightBDD.TestResultsSummary.SaveSummary(System.String)">
+            <summary>
+            Saves test results summary to specified file, using formatter defined in constructor.
+            </summary>
+            <param name="filePath">Output file path.</param>
+        </member>
+        <member name="P:LightBDD.TestResultsSummary.Results">
+            <summary>
+            Returns all collected results.
+            </summary>
+        </member>
+        <member name="T:LightBDD.Results.Formatters.XmlResultFormatter">
+            <summary>
+            Formats feature results as XML.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Results.Formatters.XmlResultFormatter.Format(LightBDD.Results.IFeatureResult[])">
+            <summary>
+            Formats feature results.
+            </summary>
+            <param name="features">Features to format.</param>
+        </member>
+        <member name="T:LightBDD.Naming.NameFormatter">
+            <summary>
+            Formats name into readable text.
+            </summary>
+        </member>
+        <member name="M:LightBDD.Naming.NameFormatter.Format(System.String)">
+            <summary>
+            Formats name into readable text.
+            This method applies following replacements:<br/>
+            "__" -> ": "<br/>
+            "_s_" -> "'s "<br/>
+            "_" -> " "<br/>
+            </summary>
+            <param name="name">Name to format.</param>
+            <returns>Formatted text.</returns>
+        </member>
+    </members>
+</doc>

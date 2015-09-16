@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestResults>
+  <Summary TestExecutionStart="2015-06-19T14:32:10.5977857Z" TestExecutionTime="PT0S">
+    <Features Count="1" />
+    <Scenarios Count="0" Passed="0" Bypassed="0" Failed="0" Ignored="0" />
+    <Steps Count="0" Passed="0" Bypassed="0" Failed="0" Ignored="0" NotRun="0" />
+  </Summary>
+  <Feature Name="DiariesControllerFeature" Label="Story1">
+    <Description>Inorder to checked DiariesController
+        As a user
+        I want to check this controller</Description>
+  </Feature>
+</TestResults>
